@@ -19,7 +19,7 @@ namespace UmamusumeResponseAnalyzer.Entities
         /// <summary>
         /// 长度限定为2汉字的简称，如美浦波旁=>波旁
         /// </summary>
-        public string Nickname { get; set; } = "未知";
+        public string Nickname { get; set; } = "未知角色!!!!!";
     }
     public class SupportCardName(int id, string name, int type, int charaId) : BaseName(id, name)
     {

@@ -86,6 +86,11 @@ namespace UmamusumeResponseAnalyzer.Entities
                             break;
                     }
                 }*/
+
+                if (Name.Contains("未知角色"))
+                {
+                    NameColor = $"[red]";
+                }
                 Name = Database.Names.GetSupportCard(CardId).Nickname.EscapeMarkup();
                 if (Name.Contains("[友]")) // 友人单独标绿
                 {
