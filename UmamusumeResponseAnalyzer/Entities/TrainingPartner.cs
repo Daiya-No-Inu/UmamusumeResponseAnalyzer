@@ -87,16 +87,17 @@ namespace UmamusumeResponseAnalyzer.Entities
                     }
                 }*/
 
-                if (Name.Contains("未知角色"))
-                {
-                    NameColor = $"[red]";
-                }
                 Name = Database.Names.GetSupportCard(CardId).Nickname.EscapeMarkup();
                 if (Name.Contains("[友]")) // 友人单独标绿
                 {
                     Priority = PartnerPriority.友人;
                     NameColor = $"[green]";
 
+                }
+
+                if (Name.Contains("未知角色"))
+                {
+                    NameColor = $"[red]";
                 }
                 else if (Friendship < 80)// 除了友人以外都可以进行友情训练，检测羁绊
                 {
