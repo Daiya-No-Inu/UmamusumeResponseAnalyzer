@@ -94,15 +94,14 @@ namespace UmamusumeResponseAnalyzer.Entities
                     NameColor = $"[green]";
 
                 }
-
-                if (Name.Contains("未知角色"))
-                {
-                    NameColor = $"[red]";
-                }
                 else if (Friendship < 80)// 除了友人以外都可以进行友情训练，检测羁绊
                 {
                     Priority = PartnerPriority.羁绊不足;
                     NameColor = "[yellow]";
+                }
+                else if (Name.Contains("未知角色"))
+                {
+                    NameColor = $"[red]";
                 }
                 //在得意位置上
                 Shining = Friendship >= 80 &&
