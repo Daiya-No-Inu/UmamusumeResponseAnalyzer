@@ -23,15 +23,13 @@ namespace UmamusumeResponseAnalyzer
                 var buffer = ctx.Request.DataAsBytes;
 #if DEBUG
                 Directory.CreateDirectory("packets");
-                File.WriteAllBytes($@"./packets/{DateTime.Now:yy-MM-dd HH-mm-ss-fff}{Random.Shared.Next(000, 999)}R.bin", buffer);
                 File.WriteAllText($@"./packets/{DateTime.Now:yy-MM-dd HH-mm-ss-fff}{Random.Shared.Next(000, 999)}R.json", JObject.Parse(MessagePackSerializer.ConvertToJson(buffer)).ToString());
 #endif
-                if (Config.Debug.SaveResponseForDebug)
+                if (Config.Misc.SaveResponseForDebug)
                 {
-                    var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UmamusumeResponseAnalyzer", "packets");
-                    if (Directory.Exists(directory))
+                    if (Directory.Exists("packets"))
                     {
-                        foreach (var i in Directory.GetFiles(directory))
+                        foreach (var i in Directory.GetFiles("packets"))
                         {
                             var fileInfo = new FileInfo(i);
                             if (fileInfo.CreationTime.AddDays(1) < DateTime.Now)
@@ -40,9 +38,9 @@ namespace UmamusumeResponseAnalyzer
                     }
                     else
                     {
-                        Directory.CreateDirectory(directory);
+                        Directory.CreateDirectory("packets");
                     }
-                    File.WriteAllBytes($"{directory}/{DateTime.Now:yy-MM-dd HH-mm-ss-fff}R.msgpack", buffer);
+                    File.WriteAllBytes($"packets/{DateTime.Now:yy-MM-dd HH-mm-ss-fff}R.msgpack", buffer);
                 }
                 _ = Task.Run(() => ParseResponse(buffer));
                 return ctx.Response.Send(string.Empty);
@@ -50,13 +48,6 @@ namespace UmamusumeResponseAnalyzer
             server.Routes.PreAuthentication.Static.Add(WatsonWebserver.Core.HttpMethod.POST, "/notify/request", (ctx) =>
             {
                 var buffer = ctx.Request.DataAsBytes;
-#if DEBUG
-                Directory.CreateDirectory("packets");
-                if (Config.Core.RequestAdditionalHeader)
-                    File.WriteAllText($@"./packets/{DateTime.Now:yy-MM-dd HH-mm-ss-fff}{Random.Shared.Next(000, 999)}Q.json", JObject.Parse(MessagePackSerializer.ConvertToJson(buffer.AsMemory()[170..])).ToString());
-                else
-                    File.WriteAllText($@"./packets/{DateTime.Now:yy-MM-dd HH-mm-ss-fff}{Random.Shared.Next(000, 999)}Q.json", JObject.Parse(MessagePackSerializer.ConvertToJson(buffer.AsMemory())).ToString());
-#endif
                 if (Config.Core.RequestAdditionalHeader)
                     _ = Task.Run(() => ParseRequest(buffer[170..]));
                 else
@@ -88,7 +79,7 @@ namespace UmamusumeResponseAnalyzer
                        .ToList();
                 foreach (var i in interfaces)
                 {
-                    AnsiConsole.WriteLine(I18N_AvailableEndpointTip, i);
+                    AnsiConsole.WriteLine(I18N_AvailableEndpointTip, i, Config.Core.ListenPort);
                 }
             }
         }
@@ -99,6 +90,13 @@ namespace UmamusumeResponseAnalyzer
             {
                 var str = MessagePackSerializer.ConvertToJson(buffer);
                 var obj = JsonConvert.DeserializeObject<JObject>(str);
+#if DEBUG
+                Directory.CreateDirectory("packets");
+                if (Config.Core.RequestAdditionalHeader)
+                    File.WriteAllText($@"./packets/{DateTime.Now:yy-MM-dd HH-mm-ss-fff}{Random.Shared.Next(000, 999)}Q.json", obj?.ToString() ?? string.Empty);
+                else
+                    File.WriteAllText($@"./packets/{DateTime.Now:yy-MM-dd HH-mm-ss-fff}{Random.Shared.Next(000, 999)}Q.json", obj?.ToString() ?? string.Empty);
+#endif
                 if (obj == default) return;
 
                 foreach (var (k, v) in PluginManager.RequsetAnalyzerMethods)
@@ -116,9 +114,11 @@ namespace UmamusumeResponseAnalyzer
                     }
                 }
             }
-            catch (Exception e)
+            catch
             {
-                AnsiConsole.WriteException(e);
+                if (!Config.Core.RequestAdditionalHeader) buffer = buffer[170..];
+                Config.Core.RequestAdditionalHeader = !Config.Core.RequestAdditionalHeader;
+                Config.Save();
             }
         }
         static void ParseResponse(byte[] buffer)
