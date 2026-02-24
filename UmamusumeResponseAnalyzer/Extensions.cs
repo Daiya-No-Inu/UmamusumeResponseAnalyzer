@@ -21,6 +21,7 @@ namespace UmamusumeResponseAnalyzer
         Legend = 10,
         Pioneer = 11,
         Onsen = 12,
+        Breeders = 13,
         Unknown = int.MaxValue
     }
     public static class Extensions
@@ -93,6 +94,8 @@ namespace UmamusumeResponseAnalyzer
                 ScenarioType.Cook => data.chara_info.scenario_id == 8 && data.cook_data_set != null,
                 ScenarioType.Mecha => data.chara_info.scenario_id == 9 && data.mecha_data_set != null,
                 ScenarioType.Legend => data.chara_info.scenario_id == 10 && data.legend_data_set != null,
+                ScenarioType.Pioneer => data.chara_info.scenario_id == 11 && data.pioneer_data_set != null,
+                ScenarioType.Onsen => data.chara_info.scenario_id == 12 && data.onsen_data_set != null,
                 ScenarioType.Unknown => true,
                 _ => false
             };
@@ -203,6 +206,30 @@ namespace UmamusumeResponseAnalyzer
             if (_dictionaries[mre].Values.All(x => x))
             {
                 mre.Reset();
+            }
+        }
+    }
+    public static class  GallopExtensions
+    {
+        public static int GetCommandInfoStage(this SingleModeCheckEventResponse @event)
+        {
+            //if ((@event.data.unchecked_event_array != null && @event.data.unchecked_event_array.Length > 0)) return;
+            if (@event.data.chara_info.playing_state == 1 && (@event.data.unchecked_event_array == null || @event.data.unchecked_event_array.Length == 0))
+            {
+                return 2;
+            } //常规训练
+            else if (@event.data.chara_info.playing_state == 5 && @event.data.unchecked_event_array.Any(x => x.story_id == 400010112)) //选buff
+            {
+                return 5;
+            }
+            else if (@event.data.chara_info.playing_state == 5 &&
+                (@event.data.unchecked_event_array.Any(x => x.story_id == 830241003))) //选团卡事件
+            {
+                return 3;
+            }
+            else
+            {
+                return 0;
             }
         }
     }
