@@ -245,7 +245,7 @@ namespace UmamusumeResponseAnalyzer
             //添加剧本进化
             foreach (var upgraded in Database.SkillUpgradeSpeciality.Values)
             {
-                var baseSkill = list.FirstOrDefault(x => x.Id == upgraded.BaseSkillId);
+                var baseSkill = this[upgraded.BaseSkillId];
                 if (baseSkill != default && chara_info.scenario_id == upgraded.ScenarioId)
                 {
                     foreach (var j in upgraded.UpgradeSkills)

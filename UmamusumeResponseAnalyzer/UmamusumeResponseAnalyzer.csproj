@@ -8,7 +8,7 @@
 		<AssemblyVersion></AssemblyVersion>
 		<FileVersion></FileVersion>
 		<Authors>$(AssemblyName)</Authors>
-		<Version>1.14.3.0</Version>
+		<Version>1.14.3.2</Version>
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<Platforms>AnyCPU;x64</Platforms>
@@ -42,17 +42,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MessagePack" Version="3.1.3" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Spectre.Console" Version="0.50.0" />
-		<PackageReference Include="Watson.Lite" Version="6.3.9" />
+		<PackageReference Include="MessagePack" Version="3.1.4" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageReference Include="Spectre.Console" Version="0.54.0" />
+		<PackageReference Include="Watson.Lite" Version="6.5.6" />
 		<PackageReference Include="YamlDotNet" Version="16.3.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Include="NetFilterAPI">
-	    <HintPath>..\..\URA-Assets\Deps\NetFilterAPI.dll</HintPath>
-	  </Reference>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -81,11 +75,6 @@
 		  <AutoGen>True</AutoGen>
 		  <DependentUpon>Database.resx</DependentUpon>
 		</Compile>
-		<Compile Update="Localization\DMM.Designer.cs">
-		  <DesignTime>True</DesignTime>
-		  <AutoGen>True</AutoGen>
-		  <DependentUpon>DMM.resx</DependentUpon>
-		</Compile>
 		<Compile Update="Localization\Game.Designer.cs">
 		  <DesignTime>True</DesignTime>
 		  <AutoGen>True</AutoGen>
@@ -100,11 +89,6 @@
 		  <DesignTime>True</DesignTime>
 		  <AutoGen>True</AutoGen>
 		  <DependentUpon>NameManager.resx</DependentUpon>
-		</Compile>
-		<Compile Update="Localization\NetFilter.Designer.cs">
-		  <DesignTime>True</DesignTime>
-		  <AutoGen>True</AutoGen>
-		  <DependentUpon>NetFilter.resx</DependentUpon>
 		</Compile>
 		<Compile Update="Localization\ResourceUpdater.Designer.cs">
 		  <DesignTime>True</DesignTime>
@@ -142,10 +126,6 @@
 		<EmbeddedResource Update="Localization\Database.zh-CN.resx">
 		  <Generator>ResXFileCodeGenerator</Generator>
 		</EmbeddedResource>
-		<EmbeddedResource Update="Localization\DMM.resx">
-		  <Generator>ResXFileCodeGenerator</Generator>
-		  <LastGenOutput>DMM.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
 		<EmbeddedResource Update="Localization\Game.resx">
 		  <Generator>PublicResXFileCodeGenerator</Generator>
 		  <LastGenOutput>Game.Designer.cs</LastGenOutput>
@@ -157,10 +137,6 @@
 		<EmbeddedResource Update="Localization\NameManager.resx">
 		  <Generator>ResXFileCodeGenerator</Generator>
 		  <LastGenOutput>NameManager.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Localization\NetFilter.resx">
-		  <Generator>ResXFileCodeGenerator</Generator>
-		  <LastGenOutput>NetFilter.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Localization\ResourceUpdater.resx">
 		  <Generator>ResXFileCodeGenerator</Generator>

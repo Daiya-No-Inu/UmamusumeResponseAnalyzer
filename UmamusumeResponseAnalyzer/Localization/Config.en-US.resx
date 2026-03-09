@@ -126,9 +126,6 @@
   <data name="Tabs_Debug_Title" xml:space="preserve">
     <value>Debug</value>
   </data>
-  <data name="Tabs_DMM_Title" xml:space="preserve">
-    <value>DMM</value>
-  </data>
   <data name="Tabs_Language_Title" xml:space="preserve">
     <value>Language</value>
   </data>
@@ -137,9 +134,6 @@
   </data>
   <data name="Tabs_Misc_Title" xml:space="preserve">
     <value>Miscellaneous</value>
-  </data>
-  <data name="Tabs_NetFilter_Title" xml:space="preserve">
-    <value>Agent</value>
   </data>
   <data name="Tabs_Updater_Title" xml:space="preserve">
     <value>Update</value>

@@ -9,9 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using UmamusumeResponseAnalyzer.Entities;
 using UmamusumeResponseAnalyzer.Plugin;
-using static UmamusumeResponseAnalyzer.Localization.DMM;
 using static UmamusumeResponseAnalyzer.Localization.LaunchMenu;
-using static UmamusumeResponseAnalyzer.Localization.NetFilter;
 
 namespace UmamusumeResponseAnalyzer
 {
@@ -55,42 +53,6 @@ namespace UmamusumeResponseAnalyzer
             Task.WaitAll(_database_initialize_task, _plugin_initialize_task); //等待数据库初始化完成
             Server.Start(); //启动HTTP服务器
             Task.WaitAll([.. PluginManager.LoadedPlugins.Select(x => Task.Run(x.Initialize))]);
-
-            if (Config.NetFilter.Enable)
-                await NetFilter.Enable();
-            //如果存在DMM的token文件则启用直接登录功能
-            if (Config.DMM.Enable && Config.DMM.Accounts.Count != 0)
-            {
-                if (Config.DMM.Accounts.Count == 1)
-                {
-                    await DMM.RunUmamusume(Config.DMM.Accounts[0]);
-                }
-                else
-                {
-                    prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                        .Title(I18N_MultipleAccountsFound)
-                        .WrapAround(true)
-                        .AddChoices(Config.DMM.Accounts.Select(x => x.Name))
-                        .AddChoices([I18N_LaunchAll, I18N_Cancel]));
-                    if (prompt == I18N_LaunchAll)
-                    {
-                        DMM.IgnoreExistProcess = true;
-                        foreach (var account in Config.DMM.Accounts)
-                            await DMM.RunUmamusume(account);
-                    }
-                    else if (prompt == I18N_Cancel)
-                    {
-                    }
-                    else
-                    {
-                        var account = Config.DMM.Accounts.Find(x => x.Name == prompt);
-                        if (account != default)
-                        {
-                            await DMM.RunUmamusume(account);
-                        }
-                    }
-                }
-            }
 
             for (var i = 0; i < 30; i++)
             {
@@ -190,18 +152,6 @@ namespace UmamusumeResponseAnalyzer
             // Windows限定功能，其他平台不显示
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                if (Config.NetFilter.Enable && WORKING_DIRECTORY != PORTABLE_WORKING_DIRECTORY)
-                {
-                    if (File.Exists($"{Environment.SystemDirectory}\\drivers\\netfilter2.sys"))
-                    {
-                        selections.AddChoice(I18N_ConfigProxyServer);
-                        selections.AddChoice(I18N_NFDriver_Uninstall);
-                    }
-                    else
-                    {
-                        selections.AddChoice(I18N_NFDriver_Install);
-                    }
-                }
                 selections.AddChoice(I18N_InstallUraCore);
             }
             #endregion
@@ -305,44 +255,6 @@ namespace UmamusumeResponseAnalyzer
             {
                 await ResourceUpdater.UpdateProgram();
             }
-            else if (prompt == I18N_NFDriver_Install)
-            {
-                await ResourceUpdater.DownloadNetFilter(NetFilter.nfapiPath, NetFilter.nfdriverPath, NetFilter.redirectorPath);
-                using var Proc = new Process();
-                var StartInfo = new ProcessStartInfo
-                {
-                    FileName = Environment.ProcessPath,
-                    Arguments = "--install-netfilter-driver",
-                    CreateNoWindow = true,
-                    UseShellExecute = true,
-                    Verb = "runas"
-                };
-                Proc.StartInfo = StartInfo;
-                Proc.Start();
-                Proc.WaitForExit();
-                if (File.Exists(NetFilter.nfapiPath) && File.Exists(NetFilter.nfdriverPath) && File.Exists(NetFilter.redirectorPath) && File.Exists($"{Environment.SystemDirectory}\\drivers\\netfilter2.sys"))
-                {
-                    Config.NetFilter.Enable = true;
-                    Config.Save();
-                }
-            }
-            else if (prompt == I18N_NFDriver_Uninstall)
-            {
-                using var Proc = new Process();
-                var StartInfo = new ProcessStartInfo
-                {
-                    FileName = Environment.ProcessPath,
-                    Arguments = "--uninstall-netfilter-driver",
-                    CreateNoWindow = true,
-                    UseShellExecute = true,
-                    Verb = "runas"
-                };
-                Proc.StartInfo = StartInfo;
-                Proc.Start();
-                Proc.WaitForExit();
-                Config.NetFilter.Enable = false;
-                Config.Save();
-            }
             else if (prompt == I18N_InstallUraCore && UraCoreHelper.GamePaths.Count != 0)
             {
                 AnsiConsole.Clear();
@@ -413,26 +325,6 @@ namespace UmamusumeResponseAnalyzer
                             case "-v" or "--version":
                                 {
                                     Console.Write(Assembly.GetExecutingAssembly().GetName().Version);
-                                    Environment.Exit(0);
-                                    return;
-                                }
-                            case "--install-netfilter-driver":
-                                {
-                                    AnsiConsole.Status().Start(I18N_NFDriver_InstallingAlert, (ctx) =>
-                                    {
-                                        ctx.Spinner(Spinner.Known.BouncingBar);
-                                        NetFilter.InstallDriver();
-                                    });
-                                    Environment.Exit(0);
-                                    return;
-                                }
-                            case "--uninstall-netfilter-driver":
-                                {
-                                    AnsiConsole.Status().Start(I18N_NFDriver_UninstallingAlert, (ctx) =>
-                                    {
-                                        ctx.Spinner(Spinner.Known.BouncingBar);
-                                        NetFilter.UninstallDriver();
-                                    });
                                     Environment.Exit(0);
                                     return;
                                 }
