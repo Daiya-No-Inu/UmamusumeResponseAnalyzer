@@ -8,7 +8,7 @@
 		<AssemblyVersion></AssemblyVersion>
 		<FileVersion></FileVersion>
 		<Authors>$(AssemblyName)</Authors>
-		<Version>1.14.3.2</Version>
+		<Version>1.14.4.0</Version>
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<Platforms>AnyCPU;x64</Platforms>
@@ -50,11 +50,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Update="Localization\CommandInfo\Cook.zh-CN.Designer.cs">
-		  <DependentUpon>Cook.zh-CN.resx</DependentUpon>
-		  <DesignTime>True</DesignTime>
-		  <AutoGen>True</AutoGen>
-		</Compile>
 		<Compile Update="Localization\CommandInfo\Cook.Designer.cs">
 		  <DependentUpon>Cook.resx</DependentUpon>
 		  <DesignTime>True</DesignTime>
