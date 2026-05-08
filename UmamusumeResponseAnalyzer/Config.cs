@@ -74,7 +74,11 @@ namespace UmamusumeResponseAnalyzer
                 prompt = AnsiConsole.Prompt(selection);
                 if (prompt == i18n.Return) break;
                 var config = typeof(Config).GetProperty(translatedTabs[prompt])?.GetValue(null);
-                config?.GetType()?.GetMethod("Prompt")?.Invoke(config, null);
+                var result = config?.GetType()?.GetMethod("Prompt")?.Invoke(config, null);
+                if (result is Task task)
+                {
+                    task.GetAwaiter().GetResult();
+                }
             }
         }
     }
@@ -215,7 +219,7 @@ namespace UmamusumeResponseAnalyzer
 
     public class PluginConfig
     {
-        public void Prompt()
+        public async Task Prompt()
         {
             UmamusumeResponseAnalyzer._plugin_initialize_task.Wait();
             var selected = string.Empty;
@@ -232,7 +236,7 @@ namespace UmamusumeResponseAnalyzer
                 if (selected != i18n.Return)
                 {
                     var plugin = plugins[selected];
-                    plugin.ConfigPrompt();
+                    await plugin.ConfigPromptAsync();
                 }
             } while (selected != i18n.Return);
         }
